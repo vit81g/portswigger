@@ -1,0 +1,48 @@
+Незащищенная функциональность – продолжение
+
+В некоторых случаях конфиденциальные функции скрываются за счет присвоения им менее предсказуемого URL-адреса. Это пример так называемой «безопасности через неизвестность». Однако сокрытие конфиденциальных функций не обеспечивает эффективного контроля доступа, поскольку пользователи могут обнаружить запутанный URL-адрес несколькими способами.
+
+Представьте себе приложение, в котором административные функции размещаются по следующему URL-адресу:
+https://insecure-website.com/administrator-panel-yb556
+
+Злоумышленник может не догадаться об этом напрямую. Однако приложение все равно может передать URL-адрес пользователям. URL-адрес может быть раскрыт в JavaScript, который создает пользовательский интерфейс на основе роли пользователя:
+
+<script>
+	var isAdmin = false;
+	if (isAdmin) {
+		...
+		var adminPanelTag = document.createElement('a');
+		adminPanelTag.setAttribute('https://insecure-website.com/administrator-panel-yb556');
+		adminPanelTag.innerText = 'Admin panel';
+		...
+	}
+</script>
+
+Этот скрипт добавляет ссылку на пользовательский интерфейс пользователя, если он является администратором. Однако сценарий, содержащий URL-адрес, виден всем пользователям независимо от их роли.
+
+Эта лаборатория имеет незащищенную панель администратора. Он расположен в непредсказуемом месте, но это местоположение указано где-то в приложении.
+
+Решите лабораторную работу, войдя в панель администратора и удалив с ее помощью пользователя Carlos.
+
+https://0a90003d047431478191ca5e00c100cd.web-security-academy.net/
+
+1. start burp suit
+2. смотрим стартовую страницу, там есть некий js скрипт, где есть admin
+3.  <script>
+var isAdmin = false;
+if (isAdmin) {
+   var topLinksTag = document.getElementsByClassName("top-links")[0];
+   var adminPanelTag = document.createElement('a');
+   adminPanelTag.setAttribute('href', '/admin-kh1e6h');
+   adminPanelTag.innerText = 'Admin panel';
+   topLinksTag.append(adminPanelTag);
+   var pTag = document.createElement('p');
+   pTag.innerText = '|';
+   topLinksTag.appendChild(pTag);
+}
+</script>
+
+Это и есть наша ссылка на панель админа:
+ adminPanelTag.setAttribute('href', '/admin-kh1e6h')
+ 
+ https://0a90003d047431478191ca5e00c100cd.web-security-academy.net/admin-kh1e6h
