@@ -1,0 +1,66 @@
+https://portswigger.net/web-security/learning-paths/authentication-vulnerabilities/vulnerabilities-in-multi-factor-authentication/authentication/multi-factor/lab-2fa-broken-logic
+
+# Lab: 2FA broken logic
+
+Двухфакторная аутентификация этой лаборатории уязвима из-за ошибочной логики. Чтобы решить лабораторную задачу, зайдите на страницу учетной записи Карлоса.
+
+    Your credentials: wiener:peter
+    Victim's username: carlos
+    
+У вас также есть доступ к серверу электронной почты для получения кода подтверждения 2FA.
+
+Solution:
+
+1.   Запустив Burp, войдите в свою учетную запись и изучите процесс проверки 2FA. Обратите внимание, что в запросе POST/login2 параметр проверки используется для определения учетной записи пользователя, к которой осуществляется доступ.
+2.   Выйдите из своей учетной записи.
+3.   Отправьте запрос GET /login2 в Burp Repeater. Измените значение параметра verify на carlos и отправьте запрос. Это гарантирует, что для carlos будет создан временный код 2FA.
+4.   Перейдите на страницу входа и введите свое имя пользователя и пароль. Затем отправьте неверный код 2FA.
+5.   Отправьте запрос POST /login2 в Burp Intrumer.
+6.   В Burp Intrumer установите для параметра verify(проверки) значение carlos и добавьте позицию полезной нагрузки в параметр mfa-code. Подберите проверочный код.
+     Загрузите ответ 302 в браузер.
+     Нажмите «Моя учетная запись», чтобы выполнить лабораторную работу.
+     
+Solution:
+Настройки ZAP:
+https://medium.com/@ecralevhack/solving-portswiggers-2fa-bypass-using-a-brute-force-attack-lab-with-owasp-zap-befe780b9afc
+
+Делаем с помощью ZAP:
+1. Quick Start -> Manual Explore -> вводим ссылку лаборатории
+2. Открываем в браузере -> Launch Browser -> Chrome 
+Далее по инструкии:
+ZAP отправка request:
+Находим GET:login2  (это наш щапрос на генерацию ключа mfa)
+Копируем текст запроса
+Переходим в Requester (рядом с Request, Response)
+Вставляем туда текст запроса заменив verify=wiener на verify=carlos
+Жмем Send.  Запрос на генерацию ключа создан
+3. Подготовка к brute force в ZAP:
+Находим POST:login2()(mfa-code)
+ПКМ -> Fuzz -> в новом окне удаляем payload(полезные нагрузки)
+Жми Edit -> меняем verify=wiener на verify=carlos -> Save
+Подготовка нагрузки:
+Add -> Add -> Type: Numberzz
+From: 0
+To: 9999
+Increment: 1
+Add
+
+Выбираем нашу созданную нагрузку -> Processors.. -> в новом окне Add
+Type: Expand
+Value:0
+Lenght: 4
+Add
+
+Start Fuzzer
+
+Смотрим результаты в колонке Code - наш ответ с кодом 302
+Вделяем его -> ПКМ -> Open URL Browse
+
+Готово
+
+
+
+
+
+
+
